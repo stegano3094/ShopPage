@@ -1,0 +1,55 @@
+@import './_reset.scss';
+
+$메인칼라 : #cf6363;
+
+.red {
+    color: $메인칼라;
+}
+
+.my-alert {
+    background-color: #eeeeee;
+    padding: 20px;
+    border-radius: 5px;
+    max-width: 500px;
+    width: 100%;
+    margin: auto;
+
+    p {
+        margin: 0px;
+    }
+}
+
+.my-alert2 {
+    @extend .my-alert;
+    background-color: #ffe591;
+}
+
+// 함수 만드는 문법
+@mixin 함수() {
+    margin-bottom: 0px;
+}
+
+.my-alert3 {
+    @include 함수()
+}
+
+// 기존의 셀럭터 (CSS 문법)
+// div.conteiner h4 {
+//     color: blue;
+// }
+
+// div.conteiner p {
+//     color: green;
+// }
+
+
+// 셀럭터 대신 쓰는 nesting (SASS 문법)
+// div.conteiner {
+//     h4 {
+//         color: blue;
+//     }
+
+//     p {
+//         color: green;
+//     }
+// }
