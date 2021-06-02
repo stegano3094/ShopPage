@@ -1,14 +1,15 @@
 import './App.css';
 import React, {useState} from 'react';
 import { Navbar, Container, Nav, NavDropdown, Jumbotron, Button } from 'react-bootstrap';
-import { name, name2 } from './testExport.js';
 import Data from './data.js';
 
 import { Link, Route, Switch } from 'react-router-dom'
 import Detail from './Detail.js'
+import axios from 'axios'
 
 function App() {
   let [shoes, shoes변경] = useState(Data);
+  let [재고, 재고변경] = useState([10, 5, 16]);
 
   return (
     <div className="App">
@@ -18,7 +19,7 @@ function App() {
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="ml-auto">
-              <Nav.Link> <Link to="/">Home</Link> </Nav.Link>
+              <Nav.Link as={Link} to="/">Home</Nav.Link>
               <Nav.Link> <Link to="/detail">Detail</Link> </Nav.Link>
               <NavDropdown title="Dropdown" id="basic-nav-dropdown">
                 <NavDropdown.Item href="#action/3.1">Action</NavDropdown.Item>
@@ -56,11 +57,30 @@ function App() {
               }
             </div>
           </div>
-        </Route>
+          
+          <button className="btn btn-primary" onClick={ () => {
+            // 로딩 중이라는 UI 띄움
+
+            axios.get("https://codingapple1.github.io/shop/data2.json")  // 서버한테 get 요청하는 코드
+            .then( (result)=>{
+              // 로딩 중이라는 UI 지움
+
+              var tempShoes = [...shoes, ...result.data]
+              shoes변경(tempShoes)
+
+            } )  // 성공 시 실행
+            .catch( ()=>{ 
+              // 로딩 중이라는 UI 지움
+
+              console.log('get실패')
+            } )  // 실패 시 실행
+          }} >더보기</button>
+
+        </Route>yarn add axios
 
         {/* 상세 페이지 */}
         <Route path="/detail/:id">
-          <Detail shoes={shoes} />
+          <Detail shoes={shoes} 재고={재고} 재고변경={재고변경} />
         </Route>
 
         {/* /:id는 /뒤에 아무 문자열이나 들어가 있을 때 라는 의미이다 */}
