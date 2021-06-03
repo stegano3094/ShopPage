@@ -1,11 +1,16 @@
 import './App.css';
-import React, {useState} from 'react';
+import React, {useState, useContext, lazy, Suspense } from 'react';
 import { Navbar, Container, Nav, NavDropdown, Jumbotron, Button } from 'react-bootstrap';
 import Data from './data.js';
+// import Cart from './Cart.js';
 
-import { Link, Route, Switch } from 'react-router-dom'
+import { Link, Route, Switch, useHistory } from 'react-router-dom'
 import Detail from './Detail.js'
 import axios from 'axios'
+
+let Cart = lazy( ()=> import('./Cart.js') );
+
+export let 재고context = React.createContext();
 
 function App() {
   let [shoes, shoes변경] = useState(Data);
@@ -49,13 +54,15 @@ function App() {
           </Jumbotron>
 
           <div className="container">
-            <div className="row">
-              {
-                shoes.map( (a, i)=> {
-                  return <Card shoes={shoes[i]} key={i} />
-                })
-              }
-            </div>
+            <재고context.Provider value={재고} >
+              <div className="row">
+                {
+                  shoes.map( (a, i)=> {
+                    return <Card shoes={shoes[i]} key={i} />
+                  })
+                }
+              </div>
+            </재고context.Provider>
           </div>
           
           <button className="btn btn-primary" onClick={ () => {
@@ -76,11 +83,19 @@ function App() {
             } )  // 실패 시 실행
           }} >더보기</button>
 
-        </Route>yarn add axios
+        </Route>
 
         {/* 상세 페이지 */}
         <Route path="/detail/:id">
-          <Detail shoes={shoes} 재고={재고} 재고변경={재고변경} />
+          <재고context.Provider value={재고} >
+            <Detail shoes={shoes} 재고={재고} 재고변경={재고변경} />
+          </재고context.Provider>
+        </Route>
+
+        <Route path="/cart" >
+          <Suspense fallback={<div>로딩중...</div>} >
+            <Cart></Cart>
+          </Suspense>
         </Route>
 
         {/* /:id는 /뒤에 아무 문자열이나 들어가 있을 때 라는 의미이다 */}
@@ -94,8 +109,14 @@ function App() {
 }
 
 function Card(props) {
+  // context 사용 방법
+  let 재고 = useContext(재고context);
+  console.log(재고)
+
+  let history = useHistory();
+
   return (
-    <div className="col-md-4">
+    <div className="col-md-4" onClick={ ()=>{ history.push('/detail/' + (props.shoes.id)) } } >
         <img src={props.shoes.image_url} width="100%"/>
         <h4> {props.shoes.title} </h4>
         <p>{props.shoes.content} 가격: {props.shoes.price}원</p>
