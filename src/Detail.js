@@ -16,8 +16,25 @@ let 제목 = styled.h4`
     color: ${props => props.색상};
 `;
 
-
 function Detail(props) {
+  useEffect(
+    () => {
+      var arr = localStorage.getItem('watched');
+      
+      if (arr == null) {
+        arr = []
+      } else {
+        arr = JSON.parse(arr)
+      }
+  
+      arr.push(id)
+      arr = new Set( arr )  // Set 자료형으로 변환하며 중복이 제거됨
+      arr = [...arr]
+  
+      localStorage.setItem( 'watched', JSON.stringify(arr) )
+    }, []
+  );
+  
   let [누른탭, 누른탭변경] = useState(0);
   let [스위치, 스위치변경] = useState(false);
 
